@@ -9,11 +9,6 @@ module.exports = {
   isDevelopingAddon: function() {
     return true;
   },
-  initializeOptions: function() {
-    this.options = {
-      enabled: true //this.app.env === 'production',
-    };
-  },
 
   postprocessTree: function (type, inputNodes) {
     if (type === 'css' ) {
@@ -27,8 +22,10 @@ module.exports = {
     }
   },
 
-  included: function (app) {
-    this.app = app;
-    this.initializeOptions();
+  included: function (app, parentAddon) {
+    let target = (parentAddon || app);
+    target.options = target.options || {};
+    target.options.babel = target.options.babel || { includePolyfill: true };
+    return this._super.included.apply(this, arguments);
   },
 };
